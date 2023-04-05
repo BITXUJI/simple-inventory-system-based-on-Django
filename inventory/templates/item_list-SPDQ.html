@@ -1,0 +1,101 @@
+{% extends 'base.html' %} {% block content %}
+<!--
+    这段代码将两个表格放置在同一行并对齐。通过将每个表格包装在一个类为 col-md-6 的 div 中，
+    我们可以将两个表格水平排列在同一行。这是使用 Bootstrap 的响应式布局系统实现的。
+    每个表格将在中等（md）设备及以上占据 6 个网格列，
+    从而在总共 12 个网格列中平均分配空间。
+-->
+<div class="container my-4">
+  <div class="row">
+    <div class="col">
+      <p>今天是： {{ today|date:"F j, Y" }}</p>
+      <p>当前登录用户：{{ user.username }}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h1 class="mb-4">食物库存列表(未过期)</h1>
+      <a href="{% url 'add_item' %}" class="btn btn-primary mb-3">添加物品</a>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><a href="?sort=name">名称</a></th>
+            <th><a href="?sort=quantity">数量</a></th>
+            <th><a href="?sort=expiration_date">消费期限</a></th>
+            <th>说明</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in non_expired_items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td
+              {%
+              if
+              item.is_close_to_expire
+              %}class="text-primary"
+              {%
+              endif
+              %}
+            >
+              {{ item.expiration_date }}
+            </td>
+            <td>{{ item.description }}</td>
+            <td>
+              <a
+                href="{% url 'update_item' item.id %}"
+                class="btn btn-sm btn-warning"
+                >编辑</a
+              >
+              <a
+                href="{% url 'delete_item' item.id %}"
+                class="btn btn-sm btn-danger"
+                >删除</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-6">
+      <h1 class="mb-4">食物库存列表(已过期)</h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><a href="?sort=name">名称</a></th>
+            <th><a href="?sort=quantity">数量</a></th>
+            <th><a href="?sort=expiration_date">消费期限</a></th>
+            <th>说明</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in expired_items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td class="text-danger">{{ item.expiration_date }}</td>
+            <td>{{ item.description }}</td>
+            <td>
+              <a
+                href="{% url 'update_item' item.id %}"
+                class="btn btn-sm btn-warning"
+                >编辑</a
+              >
+              <a
+                href="{% url 'delete_item' item.id %}"
+                class="btn btn-sm btn-danger"
+                >删除</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

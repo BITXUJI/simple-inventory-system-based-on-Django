@@ -1,0 +1,60 @@
+{% extends 'base.html' %} {% block content %}
+<p>今天是： {{ today|date:"F j, Y" }}</p>
+<p>当前登录用户：{{ user.username }}</p>
+<h1>食物库存列表(未过期)</h1>
+<a href="{% url 'add_item' %}">添加物品</a>
+<table>
+  <thead>
+    <tr>
+      <th><a href="?sort=name">名称</a></th>
+      <th><a href="?sort=quantity">数量</a></th>
+      <th><a href="?sort=expiration_date">消费期限</a></th>
+      <th>说明</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in non_expired_items %}
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>{{ item.quantity }}</td>
+      <td {% if item.is_close_to_expire %}style="color:blue;" {% endif %}>
+        {{ item.expiration_date }}
+      </td>
+      <td>{{ item.description }}</td>
+      <td>
+        <a href="{% url 'update_item' item.id %}">编辑</a> |
+        <a href="{% url 'delete_item' item.id %}">删除</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h1>食物库存列表(已过期)</h1>
+<table>
+  <thead>
+    <tr>
+      <th><a href="?sort=name">名称</a></th>
+      <th><a href="?sort=quantity">数量</a></th>
+      <th><a href="?sort=expiration_date">消费期限</a></th>
+      <th>说明</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in expired_items %}
+    <tr>
+      <td>{{ item.name }}</td>
+      <td>{{ item.quantity }}</td>
+      <td style="color: red">{{ item.expiration_date }}</td>
+      <td>{{ item.description }}</td>
+      <td>
+        <a href="{% url 'update_item' item.id %}">编辑</a> |
+        <a href="{% url 'delete_item' item.id %}">删除</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

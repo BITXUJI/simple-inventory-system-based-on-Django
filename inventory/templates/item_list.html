@@ -1,0 +1,123 @@
+{% extends 'base.html' %} {% block content %}
+
+<!--
+
+为了使两个表格上下排列并对齐各个字段，
+可以将两个表格放在同一个<div>内，
+并使用<colgroup>和<col>元素为每个字段指定相同的宽度。
+
+代码中，我已经为已过期食物库存列表添加了剩余的部分。
+现在，两个表格已经在同一个页面上上下排列，并且每个字段都对齐。
+通过使用<colgroup>和<col>元素，我们可以为每个字段指定相同的宽度，从而确保上下两个表格的字段对齐。   
+-->
+<div class="container my-4">
+  <div class="row">
+    <div class="col">
+      <p>今天是： {{ today|date:"F j, Y" }}</p>
+      <p>当前登录用户：{{ user.username }}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <h1 class="mb-4">食物库存列表(未过期)</h1>
+      <a href="{% url 'add_item' %}" class="btn btn-primary mb-3">添加物品</a>
+      <table class="table table-striped">
+        <colgroup>
+          <col style="width: 20%" />
+          <col style="width: 15%" />
+          <col style="width: 15%" />
+          <col style="width: 30%" />
+          <col style="width: 20%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th><a href="?sort=name">名称</a></th>
+            <th><a href="?sort=quantity">数量</a></th>
+            <th><a href="?sort=expiration_date">消费期限</a></th>
+            <th>说明</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in non_expired_items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td
+              {%
+              if
+              item.is_close_to_expire
+              %}class="text-primary"
+              {%
+              endif
+              %}
+            >
+              {{ item.expiration_date }}
+            </td>
+            <td>{{ item.description }}</td>
+            <td>
+              <a
+                href="{% url 'update_item' item.id %}"
+                class="btn btn-sm btn-warning"
+                >编辑</a
+              >
+              <a
+                href="{% url 'delete_item' item.id %}"
+                class="btn btn-sm btn-danger"
+                >删除</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <h1 class="mb-4">食物库存列表(已过期)</h1>
+      <table class="table table-striped">
+        <colgroup>
+          <col style="width: 20%" />
+          <col style="width: 15%" />
+          <col style="width: 15%" />
+          <col style="width: 30%" />
+          <col style="width: 20%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th><a href="?sort=name">名称</a></th>
+            <th><a href="?sort=quantity">数量</a></th>
+            <th><a href="?sort=expiration_date">消费期限</a></th>
+            <th>说明</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in expired_items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td class="text-danger">{{ item.expiration_date }}</td>
+            <td>{{ item.description }}</td>
+            <td>
+              <a
+                href="{% url 'update_item' item.id %}"
+                class="btn btn-sm btn-warning"
+                >编辑</a
+              >
+              <a
+                href="{% url 'delete_item' item.id %}"
+                class="btn btn-sm btn-danger"
+                >删除</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

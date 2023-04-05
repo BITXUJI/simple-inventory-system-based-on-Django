@@ -1,0 +1,8 @@
+{% extends 'base.html' %} {% block content %}
+<h2>登录</h2>
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">登录</button>
+</form>
+<p>还没有帐户？<a href="{% url 'register' %}">注册</a></p>
+{% endblock %}

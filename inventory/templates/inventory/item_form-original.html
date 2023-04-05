@@ -1,0 +1,8 @@
+{% extends 'base.html' %} {% block content %}
+<h1>{% if form.instance.pk %}编辑{% else %}添加{% endif %}物品</h1>
+<form method="POST">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit">保存</button>
+  <a href="{% url 'item_list' %}">取消</a>
+</form>
+{% endblock %}
