@@ -1,0 +1,1 @@
+This project is a inventory system based on python Django.
